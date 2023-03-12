@@ -34,13 +34,14 @@ namespace GridSystem
 
 			return false;
 		}
-		
+
 		[Button]
 		public void ShowNeighbours()
 		{
 			foreach (var cellController in Neighbours.GetAllNeighbour())
 			{
-				cellController.spriteRenderer.color = cellController.spriteRenderer.color == Color.white ? Color.red : Color.white;
+				cellController.spriteRenderer.color =
+					cellController.spriteRenderer.color == Color.white ? Color.red : Color.white;
 			}
 		}
 	}

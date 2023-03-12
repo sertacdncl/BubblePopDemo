@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace GridSystem
 {
-	[Serializable]
 	public class CellNeighbours
 	{
 		public CellController Right;
@@ -12,7 +11,7 @@ namespace GridSystem
 		public CellController UpLeft;
 		public CellController DownRight;
 		public CellController DownLeft;
-		
+
 		public List<CellController> GetAllNeighbour()
 		{
 			var list = new List<CellController>();
@@ -39,14 +38,13 @@ namespace GridSystem
 			return list;
 		}
 		
-
 		public CellController GetNeighbour(Direction direction)
 		{
 			return direction switch
 			{
 				Direction.Left => Left,
 				Direction.Right => Right,
-				Direction.UpRight =>  UpRight != null ? UpRight : null,
+				Direction.UpRight => UpRight != null ? UpRight : null,
 				Direction.UpLeft => UpLeft != null ? UpLeft : null,
 				Direction.DownRight => DownRight != null ? DownRight : null,
 				Direction.DownLeft => DownLeft != null ? DownLeft : null,

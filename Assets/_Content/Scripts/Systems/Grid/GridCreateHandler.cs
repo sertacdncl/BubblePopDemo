@@ -8,8 +8,12 @@ namespace GridSystem
 	{
 		#region References
 
-		[Header("References"), SerializeField] private GridSettings settings;
-		[SerializeField] private Transform gridHolder;
+		[BoxGroup("References"), SerializeField]
+		private GridSettings settings;
+
+		[BoxGroup("References"), SerializeField]
+		private Transform gridHolder;
+
 		private GridManager _gridManager;
 
 		#endregion
@@ -33,9 +37,9 @@ namespace GridSystem
 			_gridManager.CellController = new CellController[(int)settings.rowColumnSize.x, (int)settings.rowColumnSize.y];
 			_gridManager.cellControllerList = new List<CellController>();
 
-			for (int x = 0; x < settings.rowColumnSize.x; x++)
+			for (int y = 0; y < settings.rowColumnSize.y; y++)
 			{
-				for (int y = 0; y < settings.rowColumnSize.y; y++)
+				for (int x = 0; x < settings.rowColumnSize.x; x++)
 				{
 					var coordinate = new Vector2Int(x, y);
 

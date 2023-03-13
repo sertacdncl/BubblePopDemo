@@ -2,23 +2,31 @@ using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 
-public class BubbleController : MonoBehaviour
+namespace BubbleSystem
 {
-	#region Reference
+	public class BubbleController : MonoBehaviour
+	{
+		#region Reference
 
-	[TabGroup("References")] [SerializeField]
-	private TextMeshPro valueText;
+		[TabGroup("References")] [SerializeField]
+		private TextMeshPro valueText;
 
-	[TabGroup("References")]
-	public BubbleData data;
+		[TabGroup("References")] public BubbleData data;
 
-	#endregion
+		[TabGroup("References")] [SerializeField]
+		private SpriteRenderer bubbleSprite;
 
-	#region Variables
+		[TabGroup("References")] [SerializeField]
+		private TextMeshPro bubbleValueText;
 
-	#endregion
+		#endregion
 
-	#region Properties
+		#region Variables
 
-	#endregion
+		#endregion
+
+		#region Properties
+
+		#endregion
+	}
 }

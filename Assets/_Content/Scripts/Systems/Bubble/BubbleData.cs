@@ -1,10 +1,12 @@
 using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
-[Serializable]
-public class BubbleData
+namespace BubbleSystem
 {
-	public int value;
-	public Color color;
+	[Serializable]
+	public class BubbleData
+	{
+		public int value;
+		public Color color;
+	}	
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace GridSystem
@@ -7,7 +8,7 @@ namespace GridSystem
 	{
 		#region References
 
-		[Header("References")] public List<CellController> cellControllerList;
+		[BoxGroup("References")] public List<CellController> cellControllerList;
 		public CellController[,] CellController { get; set; } //To reach with coords
 
 		#endregion

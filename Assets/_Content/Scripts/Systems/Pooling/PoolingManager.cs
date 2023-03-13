@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -13,9 +14,15 @@ namespace Pooling
 
 		#endregion
 
+		private void Awake()
+		{
+			if(pools.Count == 0)
+				Debug.LogError("Pool list is empty!");
+		}
+
 		public GameObject GetObjectFromPool(string poolName)
 		{
-			var pool = pools.Find(x => x.poolName == poolName);
+			var pool = pools.Find(x => string.Equals(x.poolName, poolName, StringComparison.CurrentCultureIgnoreCase));
 			return pool.GetPoolObject();
 		}
 

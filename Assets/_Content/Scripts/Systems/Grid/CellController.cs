@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BubbleSystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace GridSystem
 
 		[SerializeField] private SpriteRenderer spriteRenderer;
 		public CellNeighbours Neighbours = new();
+		public BubbleController bubbleController;
 
 		#endregion
 

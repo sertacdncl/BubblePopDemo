@@ -8,6 +8,6 @@ namespace GridSystem
 	{
 		public GameObject cellPrefab;
 		public Vector2 distance;
-		public Vector2 rowColumnSize;
+		public Vector2Int rowColumnSize;
 	}
 }

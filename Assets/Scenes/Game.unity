@@ -449,6 +449,7 @@ MonoBehaviour:
     color: {r: 0.78039217, g: 0.72156864, b: 1, a: 1}
   - value: 2048
     color: {r: 0.61960787, g: 0.4666667, b: 0.8235295, a: 1}
+  startRow: 4
 --- !u!1001 &912699882
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -893,7 +894,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f12acacdcd424ebab3458028f5877e06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pools: []
+  pools:
+  - {fileID: 1100082590}
+  - {fileID: 1683799444}
 --- !u!1 &1100082589
 GameObject:
   m_ObjectHideFlags: 0
@@ -1215,6 +1218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71f3ddfa581b3454f9397ebb4fdc2280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gridCreateHandler: {fileID: 1369163581}
   cellControllerList: []
 --- !u!4 &1369163580
 Transform:
@@ -1246,7 +1250,7 @@ MonoBehaviour:
   settings:
     cellPrefab: {fileID: 7011830711787308542, guid: 2c1c0d22213a97c47bcdaa7c711dcc98, type: 3}
     distance: {x: 1, y: 0.9}
-    rowColumnSize: {x: 6, y: 12}
+    rowColumnSize: {x: 6, y: 6}
   gridHolder: {fileID: 1687463719}
 --- !u!1 &1429842528
 GameObject:
@@ -1428,7 +1432,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687463718}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3, y: -0.52, z: 0}
+  m_LocalPosition: {x: -2.8, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1834,6 +1838,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2530651853649301582, guid: ee98495a280d48a449a40f1b5a6fc0a5, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8989320197166825068, guid: ee98495a280d48a449a40f1b5a6fc0a5, type: 3}
       propertyPath: m_Name
       value: Bubble

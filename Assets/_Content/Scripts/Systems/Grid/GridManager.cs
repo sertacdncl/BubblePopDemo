@@ -8,12 +8,17 @@ namespace GridSystem
 	{
 		#region References
 
+		[BoxGroup("References"), SerializeField]
+		private GridCreateHandler gridCreateHandler;
+
 		[BoxGroup("References")] public List<CellController> cellControllerList;
 		public CellController[,] CellController { get; set; } //To reach with coords
 
 		#endregion
 
 		#region Variables
+
+		public Vector2Int GridLength => gridCreateHandler.settings.rowColumnSize;
 
 		#endregion
 

@@ -8,16 +8,13 @@ namespace BubbleSystem
 	{
 		#region Reference
 
-		[TabGroup("References")] [SerializeField]
-		private TextMeshPro valueText;
-
 		[TabGroup("References")] public BubbleData data;
 
 		[TabGroup("References")] [SerializeField]
-		private SpriteRenderer bubbleSprite;
+		private TextMeshPro valueText;
 
 		[TabGroup("References")] [SerializeField]
-		private TextMeshPro bubbleValueText;
+		private SpriteRenderer bubbleSprite;
 
 		#endregion
 
@@ -28,5 +25,12 @@ namespace BubbleSystem
 		#region Properties
 
 		#endregion
+		
+		public void SetData(BubbleData bubbleData)
+		{
+			data = bubbleData;
+			valueText.text = data.value.ToString();
+			bubbleSprite.color = data.color;
+		}
 	}
 }

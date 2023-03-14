@@ -31,8 +31,23 @@ namespace BubbleSystem
 					var cellController = GridManager.Instance.CellController[x,y];
 					cellController.bubbleController = bubble.GetComponent<BubbleController>();
 					bubble.transform.SetParent(cellController.transform, false);
-					bubble.name = $"Bubble [{x},{y}]";
+					bubble.name = $"Bubble";
 				}
+			}
+		}
+		
+		[Button]
+		public void CreateBubbleRow(int rowCoord)
+		{
+			for (int x = 0; x < GridManager.Instance.GridLength.x; x++)
+			{
+				GameObject bubble = PoolingManager.Instance.GetObjectFromPool("Bubble");
+				bubble.transform.position = Vector3.zero;
+				bubble.transform.rotation = Quaternion.identity;
+				var cellController = GridManager.Instance.CellController[x,rowCoord];
+				cellController.bubbleController = bubble.GetComponent<BubbleController>();
+				bubble.transform.SetParent(cellController.transform, false);
+				bubble.name = $"Bubble";
 			}
 		}
 	}

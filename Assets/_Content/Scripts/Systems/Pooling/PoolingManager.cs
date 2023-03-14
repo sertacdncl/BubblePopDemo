@@ -19,6 +19,12 @@ namespace Pooling
 			if(pools.Count == 0)
 				Debug.LogError("Pool list is empty!");
 		}
+		
+		public Transform GetPoolHolder(string poolName)
+		{
+			var pool = pools.Find(x => string.Equals(x.poolName, poolName, StringComparison.CurrentCultureIgnoreCase));
+			return pool.transform;
+		}
 
 		public GameObject GetObjectFromPool(string poolName)
 		{

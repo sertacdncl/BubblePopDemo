@@ -162,11 +162,44 @@ namespace GridSystem
 			_gridManager.CellController = newCellControllerArray;
 		}
 
+		[Button]
+		public void DeleteRowFromBottom()
+		{
+			var cloneCellController = (CellController[,])_gridManager.CellController.Clone();
+			var rowCount = cloneCellController.GetLength(0);
+			var columnCount = cloneCellController.GetLength(1);
+			var newCellControllerArray = new CellController[rowCount, columnCount-1];
+			var newCellControllerList = new List<CellController>();
+
+			for (int x = 0; x < rowCount; x++)
+			{
+				_gridManager.CellController[x,0].transform.SetParent(PoolingManager.Instance.GetPoolHolder("GridCell"));
+				PoolingManager.Instance.ReturnObjectToPool(_gridManager.CellController[x,0].gameObject, "GridCell");
+			}
+			
+			for (int y = 1; y < columnCount; y++)
+			{
+				for (int x = 0; x < rowCount; x++)
+				{
+					var cellController = cloneCellController[x,y];
+					cellController.coordinate = new Vector2Int(x, y-1);
+					cellController.name = $"Cell [{x},{y-1}]";
+					newCellControllerArray[x, y-1] = cellController;
+					newCellControllerList.Add(cellController);
+				}
+			}
+			
+			_gridManager.CellController = newCellControllerArray;
+			_gridManager.cellControllerList = newCellControllerList;
+			
+			SetTileNeighbours();
+		}
+
 		public void SetTileNeighbours()
 		{
-			for (int x = 0; x < settings.rowColumnSize.x; x++)
+			for (int x = 0; x < _gridManager.GridLength.x; x++)
 			{
-				for (int y = 0; y < settings.rowColumnSize.y; y++)
+				for (int y = 0; y < _gridManager.GridLength.y; y++)
 				{
 					var cell = _gridManager.CellController;
 					CellController baseCell = _gridManager.CellController[x, y];

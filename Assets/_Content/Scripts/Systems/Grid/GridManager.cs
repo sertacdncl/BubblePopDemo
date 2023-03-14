@@ -18,7 +18,7 @@ namespace GridSystem
 
 		#region Variables
 
-		public Vector2Int GridLength => gridCreateHandler.settings.rowColumnSize;
+		public Vector2Int GridLength => new(CellController.GetLength(0), CellController.GetLength(1));
 
 		#endregion
 

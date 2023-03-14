@@ -449,7 +449,6 @@ MonoBehaviour:
     color: {r: 0.78039217, g: 0.72156864, b: 1, a: 1}
   - value: 2048
     color: {r: 0.61960787, g: 0.4666667, b: 0.8235295, a: 1}
-  startRow: 4
 --- !u!1001 &912699882
 PrefabInstance:
   m_ObjectHideFlags: 0

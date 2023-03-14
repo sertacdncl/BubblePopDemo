@@ -16,10 +16,7 @@ namespace BubbleSystem
 		#endregion
 
 		#region Variables
-
-		[BoxGroup("Variables"), SerializeField]
-		private int startRow = 4;
-
+		
 		#endregion
 
 		public void PrepareStart()

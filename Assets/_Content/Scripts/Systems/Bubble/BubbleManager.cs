@@ -10,8 +10,8 @@ namespace BubbleSystem
 	{
 		#region References
 
-		[BoxGroup("References"), SerializeField, TableList]
-		private List<BubbleData> bubbleDataList;
+		[BoxGroup("References"), SerializeField]
+		private BubbleDataPoolHandler bubbleDataPoolHandler;
 
 		#endregion
 
@@ -25,29 +25,42 @@ namespace BubbleSystem
 			{
 				for (int x = 0; x < GridManager.Instance.GridLength.x; x++)
 				{
-					GameObject bubble = PoolingManager.Instance.GetObjectFromPool("Bubble");
-					bubble.transform.position = Vector3.zero;
-					bubble.transform.rotation = Quaternion.identity;
+					//Target cell
 					var cellController = GridManager.Instance.CellController[x,y];
-					cellController.bubbleController = bubble.GetComponent<BubbleController>();
-					bubble.transform.SetParent(cellController.transform, false);
-					bubble.name = $"Bubble";
+
+					CreateBubbleToCell(cellController);
 				}
 			}
 		}
-		
+
+		private void CreateBubbleToCell(CellController cellController)
+		{
+			//Getting bubble object from pool
+			GameObject bubble = PoolingManager.Instance.GetObjectFromPool("Bubble");
+			var bubbleController = bubble.GetComponent<BubbleController>();
+
+			//Setting bubble position and rotation
+			bubble.transform.position = Vector3.zero;
+			bubble.transform.rotation = Quaternion.identity;
+
+			//Setting bubble parent, reference and name
+			cellController.bubbleController = bubbleController;
+			bubble.transform.SetParent(cellController.transform, false);
+			bubble.name = $"Bubble";
+
+			//Setting bubble data
+			var bubbleData = bubbleDataPoolHandler.GetBubbleDataFromPool();
+			bubbleController.SetData(bubbleData);
+		}
+
 		[Button]
 		public void CreateBubbleRow(int rowCoord)
 		{
 			for (int x = 0; x < GridManager.Instance.GridLength.x; x++)
 			{
-				GameObject bubble = PoolingManager.Instance.GetObjectFromPool("Bubble");
-				bubble.transform.position = Vector3.zero;
-				bubble.transform.rotation = Quaternion.identity;
 				var cellController = GridManager.Instance.CellController[x,rowCoord];
-				cellController.bubbleController = bubble.GetComponent<BubbleController>();
-				bubble.transform.SetParent(cellController.transform, false);
-				bubble.name = $"Bubble";
+				
+				CreateBubbleToCell(cellController);
 			}
 		}
 	}

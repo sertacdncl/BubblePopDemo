@@ -1,5 +1,6 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Helper
 {
@@ -8,18 +9,24 @@ namespace Helper
 		//Option enum can be extended
 		public enum Option
 		{
-			A,
-			B,
-			C,
-			D,
-			E,
-			F
+			Two,
+			Four,
+			Eight,
+			Sixteen,
+			ThirtyTwo,
+			SixtyFour,
+			OneHundredTwentyEight,
+			TwoHundredFiftySix,
+			FiveHundredTwelve,
+			OneThousandTwentyFour,
+			TwoThousandFortyEight
 		}
 
+		[Serializable]
 		public class OptionData
 		{
-			public readonly float Weight;
-			public readonly Option MyOption;
+			public float Weight;
+			public Option MyOption;
 
 			public OptionData(Option myOption, float weight)
 			{
@@ -44,7 +51,7 @@ namespace Helper
 					return optionsData.MyOption;
 			}
 
-			return Option.A;
+			return Option.Two;
 		}
 	}
 }

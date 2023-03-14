@@ -426,29 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc9c03f9d7424e6aab9d4d59923157f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bubbleDataList:
-  - value: 2
-    color: {r: 0.95294124, g: 0.46274513, b: 0.5568628, a: 1}
-  - value: 4
-    color: {r: 0.9294118, g: 0.3921569, b: 0.21960786, a: 1}
-  - value: 8
-    color: {r: 1, g: 0.7254902, b: 0.16078432, a: 1}
-  - value: 16
-    color: {r: 0.9333334, g: 0.5294118, b: 0.21960786, a: 1}
-  - value: 32
-    color: {r: 0.43529415, g: 0.73333335, b: 0.3137255, a: 1}
-  - value: 64
-    color: {r: 0.2627451, g: 0.76470596, b: 0.64705884, a: 1}
-  - value: 128
-    color: {r: 0.3803922, g: 0.7176471, b: 0.92549026, a: 1}
-  - value: 256
-    color: {r: 0.40784317, g: 0.5764706, b: 0.8745099, a: 1}
-  - value: 512
-    color: {r: 0.83921576, g: 0.6039216, b: 0.8196079, a: 1}
-  - value: 1024
-    color: {r: 0.78039217, g: 0.72156864, b: 1, a: 1}
-  - value: 2048
-    color: {r: 0.61960787, g: 0.4666667, b: 0.8235295, a: 1}
+  bubbleDataPoolHandler: {fileID: 1961011269}
 --- !u!1001 &912699882
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1622,6 +1600,97 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1961011267
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1961011268}
+  - component: {fileID: 1961011269}
+  m_Layer: 0
+  m_Name: BubbleDataPoolHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1961011268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961011267}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2067033968}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1961011269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961011267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf8bc9a579909de49acbb15dc7c3e5c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listOptionsData:
+  - Weight: 1
+    MyOption: 0
+  - Weight: 1
+    MyOption: 1
+  - Weight: 1
+    MyOption: 2
+  - Weight: 0.8
+    MyOption: 3
+  - Weight: 0.5
+    MyOption: 4
+  - Weight: 0.25
+    MyOption: 5
+  - Weight: 0.1
+    MyOption: 6
+  - Weight: 0
+    MyOption: 7
+  - Weight: 0
+    MyOption: 8
+  - Weight: 0
+    MyOption: 9
+  - Weight: 0
+    MyOption: 10
+  bubbleDataList:
+  - value: 2
+    color: {r: 0.95294124, g: 0.46274513, b: 0.5568628, a: 1}
+  - value: 4
+    color: {r: 0.9294118, g: 0.3921569, b: 0.21960786, a: 1}
+  - value: 8
+    color: {r: 1, g: 0.7254902, b: 0.16078432, a: 1}
+  - value: 16
+    color: {r: 0.9333334, g: 0.5294118, b: 0.21960786, a: 1}
+  - value: 32
+    color: {r: 0.43529415, g: 0.73333335, b: 0.3137255, a: 1}
+  - value: 64
+    color: {r: 0.2627451, g: 0.76470596, b: 0.64705884, a: 1}
+  - value: 128
+    color: {r: 0.3803922, g: 0.7176471, b: 0.92549026, a: 1}
+  - value: 256
+    color: {r: 0.40784317, g: 0.5764706, b: 0.8745099, a: 1}
+  - value: 512
+    color: {r: 0.83921576, g: 0.6039216, b: 0.8196079, a: 1}
+  - value: 1024
+    color: {r: 0.78039217, g: 0.72156864, b: 1, a: 1}
+  - value: 2048
+    color: {r: 0.61960787, g: 0.4666667, b: 0.8235295, a: 1}
+  initialPoolSize: 100
 --- !u!1 &2003724597
 GameObject:
   m_ObjectHideFlags: 0
@@ -1793,6 +1862,7 @@ Transform:
   - {fileID: 1369163580}
   - {fileID: 617772021}
   - {fileID: 1073536999}
+  - {fileID: 1961011268}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -137,86 +137,7 @@ namespace BubbleSystem
 			var delta = mousePos - casterPosition;
 			return delta;
 		}
-
-		private Direction? GetTargetCellDirection(Vector2 normal, CellController hitCell)
-		{
-			bool isRightCellFree = IsCellFree(hitCell, Direction.Right);
-			bool isLeftCellFree = IsCellFree(hitCell, Direction.Left);
-			bool isDownRightCellFree = IsCellFree(hitCell, Direction.DownRight);
-			bool isDownLeftCellFree = IsCellFree(hitCell, Direction.DownLeft);
-			bool isUpperRightFree = IsCellFree(hitCell, Direction.UpRight);
-			bool isUpperLeftFree = IsCellFree(hitCell, Direction.UpLeft);
-
-			Direction? direction = null;
-
-			//LowerHit
-			if (normal.y < 0)
-			{
-				//Right
-				if (normal.x > 0)
-				{
-					if (isDownRightCellFree)
-						direction = Direction.DownRight;
-					else if (isRightCellFree)
-						direction = Direction.Right;
-					else if (isDownLeftCellFree)
-						direction = Direction.DownLeft;
-					else if (isLeftCellFree)
-						direction = Direction.Left;
-				}
-				//Left
-				else
-				{
-					if (isDownLeftCellFree)
-						direction = Direction.DownLeft;
-					else if (isLeftCellFree)
-						direction = Direction.Left;
-					else if (isDownRightCellFree)
-						direction = Direction.DownRight;
-					else if (isRightCellFree)
-						direction = Direction.Right;
-				}
-			}
-			//UpperHit
-			else
-			{
-				//Right
-				if (normal.x > 0)
-				{
-					if (isUpperRightFree)
-						direction = Direction.UpRight;
-					else if (isRightCellFree)
-						direction = Direction.Right;
-					else if (isUpperLeftFree)
-						direction = Direction.UpLeft;
-					else if (isLeftCellFree)
-						direction = Direction.Left;
-				}
-				else
-				{
-					if (isUpperLeftFree)
-						direction = Direction.UpLeft;
-					else if (isLeftCellFree)
-						direction = Direction.Left;
-					else if (isUpperRightFree)
-						direction = Direction.UpRight;
-					else if (isRightCellFree)
-						direction = Direction.Right;
-				}
-			}
-
-			if (normal.y == 0)
-			{
-				if (normal.x > 0)
-					direction = Direction.Right;
-				else
-					direction = Direction.Left;
-			}
-
-			return direction;
-		}
-
-		// Returns a free direction to move in from a given hit cell and normal vector.
+		
 		private Direction? GetFreeDirectionFromHitCell(Vector2 normal, CellController hitCell)
 		{
 			// Check which neighboring cells are free.
@@ -234,7 +155,7 @@ namespace BubbleSystem
 			{
 				// If the hit was from below the bubble...
 				case < 0:
-					// ...try to get exact direction (right, down-right, left, or down-left)
+					// Try to get exact direction (right, down-right, left, or down-left)
 					direction = normal.x switch
 					{
 						> 0 =>
@@ -251,7 +172,7 @@ namespace BubbleSystem
 					break;
 				// If the hit was from above the bubble...
 				case > 0:
-					// ...try to get exact direction (right, up-right, left, or up-left)
+					// Try to get exact direction (right, up-right, left, or up-left)
 					direction = normal.x switch
 					{
 						> 0 =>
@@ -268,7 +189,7 @@ namespace BubbleSystem
 					break;
 				// If the hit was from the side of the bubble...
 				default:
-					// ...try to get exact direction (right or left)
+					// Try to get exact direction (right or left)
 					direction = normal.x > 0 ? Direction.Right : Direction.Left;
 					break;
 			}

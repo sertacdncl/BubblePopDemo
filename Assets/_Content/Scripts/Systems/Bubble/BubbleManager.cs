@@ -10,8 +10,8 @@ namespace BubbleSystem
 	{
 		#region References
 
-		[BoxGroup("References"), SerializeField]
-		private BubbleDataPoolHandler bubbleDataPoolHandler;
+		[BoxGroup("References")]
+		public BubbleDataPoolHandler bubbleDataPoolHandler;
 
 		#endregion
 
@@ -21,7 +21,7 @@ namespace BubbleSystem
 
 		public void PrepareStart()
 		{
-			for (int y = 1; y < GridManager.Instance.GridLength.y-1; y++)
+			for (int y = 1; y < GridManager.Instance.GridLength.y; y++)
 			{
 				for (int x = 0; x < GridManager.Instance.GridLength.x; x++)
 				{

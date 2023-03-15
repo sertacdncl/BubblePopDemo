@@ -9,16 +9,27 @@ namespace BubbleSystem
 	{
 		#region Reference
 
-		[TabGroup("References"), ReadOnly] public CellController cellController;
+		[TabGroup("References"), ReadOnly] 
+		public CellController cellController;
 
-		[TabGroup("References")] public BubbleData data;
+		[TabGroup("References")] 
+		public BubbleData data;
 
 		[TabGroup("References")] [SerializeField]
 		private TextMeshPro valueText;
 
 		[TabGroup("References")] [SerializeField]
 		private SpriteRenderer bubbleSprite;
+		
+		[TabGroup("References")]
+		public CircleCollider2D bubbleCollider;
+		
+		[TabGroup("References")]
+		public Rigidbody2D bubbleRigidbody;
 
+		[TabGroup("References")]
+		public TrailRenderer bubbleTrail;
+		
 		#endregion
 
 		#region Variables

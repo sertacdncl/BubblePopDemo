@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using DG.Tweening;
 using GridSystem;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace BubbleSystem
 {
@@ -16,14 +18,22 @@ namespace BubbleSystem
 		[BoxGroup("References"), SerializeField]
 		private Transform shooterTransform;
 
-		[BoxGroup("References"), SerializeField]
-		private SpriteRenderer bubbleIndicator;
+		[BoxGroup("References")] public SpriteRenderer bubbleIndicator;
 
 		[BoxGroup("References"), SerializeField]
 		private LineRenderer lineRenderer;
 
 		[BoxGroup("References"), SerializeField]
 		private LayerMask raycastLayers;
+
+		[BoxGroup("References"), ReadOnly]
+		public CellController lastTargetCell;
+		
+		[BoxGroup("References"), ReadOnly]
+		public Direction lastTargetCellDirection;
+		
+		[BoxGroup("References"), ReadOnly]
+		public List<Vector3> lastRayPath;
 
 		#endregion
 
@@ -34,19 +44,30 @@ namespace BubbleSystem
 
 		#endregion
 
-		private void Update()
+		public void OnMouseButton()
 		{
-			if (Input.GetMouseButton(0))
-			{
-				var rayPath = GetTargetDestination();
-				SetVisuals(rayPath);
-			}
-			else if (Input.GetMouseButtonUp(0))
-			{
-				SetVisuals(null);
-			}
+			var rayPath = GetTargetDestination();
+			SetVisuals(rayPath);
+		}
+		
+		public void OnMouseButtonUp()
+		{
+			UpdateLastRayPath();
+			SetVisuals(null);
 		}
 
+		private void UpdateLastRayPath()
+		{
+			lastRayPath.Clear();
+			var pathListTemp = new List<Vector3>();
+			for (int i = 0; i < lineRenderer.positionCount; i++)
+			{
+				var position = lineRenderer.GetPosition(i);
+				pathListTemp.Add(position);
+			}
+
+			lastRayPath = pathListTemp;
+		}
 
 		private List<Vector3> GetTargetDestination()
 		{
@@ -56,7 +77,8 @@ namespace BubbleSystem
 			var ray = new Ray2D(shooterPos, mousePos);
 			var rayPath = new List<Vector3>();
 			var raycastHit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, raycastLayers);
-
+			lastTargetCell = null; ;
+			lastRayPath.Clear();
 			if (raycastHit)
 			{
 #if UNITY_EDITOR
@@ -128,6 +150,8 @@ namespace BubbleSystem
 			if (neighbourPos.HasValue)
 				rayPath.Add(neighbourPos.Value);
 
+			lastTargetCell = cellController.Neighbours.GetNeighbour(targetCellDirection.Value);
+			lastTargetCellDirection = targetCellDirection.Value;
 			return rayPath;
 		}
 
@@ -137,7 +161,7 @@ namespace BubbleSystem
 			var delta = mousePos - casterPosition;
 			return delta;
 		}
-		
+
 		private Direction? GetFreeDirectionFromHitCell(Vector2 normal, CellController hitCell)
 		{
 			// Check which neighboring cells are free.
@@ -215,9 +239,9 @@ namespace BubbleSystem
 			}
 			else
 			{
-				SetLine(rayPath);
 				if (_lastIndicatorPos != rayPath[^1])
 				{
+					DOTween.Kill(bubbleIndicator.transform);
 					bubbleIndicator.transform.localScale = Vector3.zero;
 					bubbleIndicator.transform.DOScale(Vector3.one, 0.3f);
 					_lastIndicatorPos = rayPath[^1];
@@ -225,7 +249,11 @@ namespace BubbleSystem
 
 				bubbleIndicator.enabled = true;
 				bubbleIndicator.transform.position = rayPath[^1];
+
+				SetLine(rayPath);
 			}
+
+			
 		}
 
 		private void SetLine(List<Vector3> rayPath)
@@ -235,6 +263,11 @@ namespace BubbleSystem
 
 			lineRenderer.SetPositions(rayPath.ToArray());
 			lineRenderer.SetPosition(lineRenderer.positionCount - 1, _lastHitPoint);
+		}
+
+		public void SetBubblePredictionColor(Color color)
+		{
+			bubbleIndicator.color = color.WithAlpha(0.5f);
 		}
 	}
 }

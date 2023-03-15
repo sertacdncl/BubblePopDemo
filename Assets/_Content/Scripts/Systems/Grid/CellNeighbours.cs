@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace GridSystem
 {
+	[Serializable]
 	public class CellNeighbours
 	{
 		public CellController Right;

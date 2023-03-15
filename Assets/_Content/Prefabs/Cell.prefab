@@ -98,5 +98,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 7011830711787308543}
+  Neighbours:
+    Right: {fileID: 0}
+    Left: {fileID: 0}
+    UpRight: {fileID: 0}
+    UpLeft: {fileID: 0}
+    DownRight: {fileID: 0}
+    DownLeft: {fileID: 0}
   bubbleController: {fileID: 0}
   coordinate: {x: 0, y: 0}

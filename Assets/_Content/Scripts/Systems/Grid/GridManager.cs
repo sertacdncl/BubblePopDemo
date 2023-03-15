@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using BubbleSystem;
+using DG.Tweening;
+using Extensions.Vectors;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -37,11 +40,81 @@ namespace GridSystem
 			return CellController[x, y];
 		}
 
-
-		//To find direction is cross or not
-		public static bool IsCross(Direction direction)
+		[Button]
+		public void CheckGridAndProcess()
 		{
-			return direction is Direction.DownLeft or Direction.DownRight or Direction.UpLeft or Direction.UpRight;
+			//Check empty row count
+			var emptyRowCount = 0;
+			for (int y = 0; y < GridLength.y; y++)
+			{
+				var isRowEmpty = true;
+				for (int x = 0; x < GridLength.x; x++)
+				{
+					var cellController = GetCell(x, y);
+					if (ReferenceEquals(cellController.bubbleController, null))
+						continue;
+
+					isRowEmpty = false;
+					break;
+				}
+
+				if (isRowEmpty)
+					emptyRowCount++;
+				else
+					break;
+			}
+
+			if (emptyRowCount > 1)
+			{
+				for (int i = 1; i < emptyRowCount; i++)
+				{
+					gridCreateHandler.DeleteRowFromBottom();
+				}
+			}
+			else if (emptyRowCount == 0)
+			{
+				//Check bottom row is have bubble or not
+				for (int x = 0; x < GridLength.x; x++)
+				{
+					var cellController = GetCell(x, 0);
+					if (ReferenceEquals(cellController.bubbleController, null))
+						continue;
+
+					gridCreateHandler.AddExtraRowToBottom();
+					break;
+				}
+			}
+
+			//Check minimum row count
+			if (GridLength.y < gridCreateHandler.settings.rowColumnSize.y)
+			{
+				for (int i = 0; i < gridCreateHandler.settings.rowColumnSize.y - GridLength.y; i++)
+				{
+					gridCreateHandler.AddExtraRowToTop();
+					BubbleManager.Instance.CreateBubbleRow(GridLength.y - 1);
+				}
+			}
+		}
+
+		[Button]
+		public void MoveGridDown()
+		{
+			for (int y = GridLength.y - 1; y >= 0; y--)
+			{
+				for (int x = 0; x < GridLength.x; x++)
+				{
+					var cellController = GetCell(x, y);
+
+					var distance = gridCreateHandler.settings.distance;
+					var targetCellYPos = cellController.transform.localPosition.y;
+					targetCellYPos = y == 0
+						? cellController.transform.localPosition.y - distance.y
+						: GetCell(x, y - 1).transform.localPosition.y;
+
+					cellController.transform.DOLocalMove(cellController.transform.localPosition.With(y: targetCellYPos),
+						0.5f);
+				}
+			}
 		}
 	}
 }

@@ -66,7 +66,7 @@ namespace GridSystem
 		private void ShootEffect(Direction direction)
 		{
 			var targetPosition = bubbleController.transform.localPosition;
-			var moveSize = 0.1f;
+			var moveSize = 0.5f;
 			switch (direction)
 			{
 				case Direction.UpRight:
@@ -89,13 +89,8 @@ namespace GridSystem
 					break;
 			}
 
-			var pathList = new List<Vector3>()
-			{
-				targetPosition,
-				Vector3.zero
-			};
-			var sequence = DOTween.Sequence();
-			sequence.Append(bubbleController.transform.DOLocalPath(pathList.ToArray(), 0.1f).SetEase(Ease.Linear));
+			var punch = (bubbleController.transform.localPosition + targetPosition).normalized * 0.1f;
+			bubbleController.transform.DOPunchPosition(punch, 0.15f, 0);
 		}
 	}
 }

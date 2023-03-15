@@ -1,3 +1,4 @@
+using GridSystem;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace BubbleSystem
 	public class BubbleController : MonoBehaviour
 	{
 		#region Reference
+
+		[TabGroup("References"), ReadOnly] public CellController cellController;
 
 		[TabGroup("References")] public BubbleData data;
 
@@ -25,7 +28,7 @@ namespace BubbleSystem
 		#region Properties
 
 		#endregion
-		
+
 		public void SetData(BubbleData bubbleData)
 		{
 			data = bubbleData;

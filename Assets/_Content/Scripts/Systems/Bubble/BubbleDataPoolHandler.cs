@@ -15,7 +15,7 @@ public class BubbleDataPoolHandler : MonoBehaviour
 	[BoxGroup("References"), SerializeField, TableList]
 	private List<BubbleData> bubbleDataList;
 
-	private List<BubbleData> listBubbleData;
+	private List<BubbleData> _listBubbleData = new();
 
 	#endregion
 
@@ -32,22 +32,22 @@ public class BubbleDataPoolHandler : MonoBehaviour
 
 	public BubbleData GetBubbleDataFromPool()
 	{
-		if(listBubbleData.Count == 0)
+		if(_listBubbleData.Count == 0)
 			CreateBubbleDataPool();
 		
-		var bubbleData = listBubbleData[0];
-		listBubbleData.RemoveAt(0);
+		var bubbleData = _listBubbleData[0];
+		_listBubbleData.RemoveAt(0);
 		return bubbleData;
 	}
 
 	private void CreateBubbleDataPool()
 	{
-		listBubbleData = new List<BubbleData>();
+		_listBubbleData = new List<BubbleData>();
 		for (int i = 0; i < initialPoolSize; i++)
 		{
 			var option = Helpers.GetValue(listOptionsData);
 			var bubbleData = GetBubbleDataFromOption(option);
-			listBubbleData.Add(bubbleData);
+			_listBubbleData.Add(bubbleData);
 		}
 	}
 

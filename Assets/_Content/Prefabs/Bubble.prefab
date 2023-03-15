@@ -103,7 +103,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.62
 --- !u!50 &7313062220795128506
 Rigidbody2D:
   serializedVersion: 4
@@ -137,6 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb1ae52a9a224aab9b272477b349c695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cellController: {fileID: 0}
   data:
     value: 0
     color: {r: 0, g: 0, b: 0, a: 0}
@@ -200,7 +201,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -7961247735511261717, guid: 983dd1816d85ee546a1808d2d7575c7d, type: 2}
+  - {fileID: -8740917082612123119, guid: 137bedc5f3e4a694db8f1c6c75d59d4d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -244,8 +245,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 2
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 983dd1816d85ee546a1808d2d7575c7d, type: 2}
-  m_sharedMaterial: {fileID: -7961247735511261717, guid: 983dd1816d85ee546a1808d2d7575c7d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 137bedc5f3e4a694db8f1c6c75d59d4d, type: 2}
+  m_sharedMaterial: {fileID: -8740917082612123119, guid: 137bedc5f3e4a694db8f1c6c75d59d4d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -269,7 +270,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 6
+  m_fontSize: 4.1
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

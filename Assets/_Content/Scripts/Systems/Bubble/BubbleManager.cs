@@ -45,6 +45,7 @@ namespace BubbleSystem
 
 			//Setting bubble parent, reference and name
 			cellController.bubbleController = bubbleController;
+			bubbleController.cellController = cellController;
 			bubble.transform.SetParent(cellController.transform, false);
 			bubble.name = $"Bubble";
 

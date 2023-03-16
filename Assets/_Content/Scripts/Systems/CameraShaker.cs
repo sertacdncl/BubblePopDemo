@@ -22,9 +22,6 @@ public class CameraShaker : Singleton<CameraShaker>
 	
 	[BoxGroup("Variables"), SerializeField]
 	private int vibratio = 10;
-	
-	private Vector3 _originalPosition;
-	private float _elapsedTime = 0f;
 
 	#endregion
 

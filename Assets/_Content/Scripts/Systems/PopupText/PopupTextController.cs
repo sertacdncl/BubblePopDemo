@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using Extensions;
 using Pooling;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -37,7 +38,7 @@ public class PopupTextController : MonoBehaviour
 			.OnComplete(() =>
 			{
 				PoolingManager.Instance.ReturnObjectToPool(gameObject, "PopupText");
-				textMesh.color = textMesh.color.WithAlpha(1f);
+				textMesh.color = textMesh.color.With(a:1f);
 			});
 	}
 }

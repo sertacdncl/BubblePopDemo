@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using DG.Tweening;
+using Extensions;
 using GridSystem;
 using Sirenix.OdinInspector;
 using Unity.VisualScripting;
@@ -267,7 +268,7 @@ namespace BubbleSystem
 
 		public void SetBubblePredictionColor(Color color)
 		{
-			bubbleIndicator.color = color.WithAlpha(0.5f);
+			bubbleIndicator.color = color.With(a:0.5f);
 		}
 	}
 }

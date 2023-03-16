@@ -1,7 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using BubbleSystem;
 using DG.Tweening;
 using Extensions.Vectors;
+using PopupTextSystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -22,6 +24,7 @@ namespace GridSystem
 		#region Variables
 
 		public Vector2Int GridLength => new(CellController.GetLength(0), CellController.GetLength(1));
+		private bool _gridMoving = false;
 
 		#endregion
 
@@ -43,6 +46,9 @@ namespace GridSystem
 		[Button]
 		public void CheckGridAndProcess()
 		{
+			//Check is there any bubble in grid and show perfect text
+			CheckIsPerfect();
+
 			//Check empty row count
 			var emptyRowCount = 0;
 			for (int y = 0; y < GridLength.y; y++)
@@ -84,23 +90,53 @@ namespace GridSystem
 					break;
 				}
 			}
-
-			//Check minimum row count
-			if (GridLength.y < gridCreateHandler.settings.rowColumnSize.y)
-			{
-				for (int i = 0; i < gridCreateHandler.settings.rowColumnSize.y - GridLength.y; i++)
-				{
-					gridCreateHandler.AddExtraRowToTop();
-					BubbleManager.Instance.CreateBubbleRow(GridLength.y - 1);
-				}
-			}
 			
-			BubbleManager.Instance.UpdateConnectedBubbles();
+			StartCoroutine(CheckMinimumRowAndCreate());
+			IEnumerator CheckMinimumRowAndCreate()
+			{
+				//Check minimum row count
+				if (GridLength.y < gridCreateHandler.settings.rowColumnSize.y)
+				{
+					var workCount = gridCreateHandler.settings.rowColumnSize.y - GridLength.y;
+					for (int i = 0; i < workCount; i++)
+					{
+						gridCreateHandler.AddExtraRowToTop();
+						yield return new WaitWhile((() => _gridMoving));
+						BubbleManager.Instance.CreateBubblesToRow(GridLength.y - 1, true);
+					}
+				}
+			
+				BubbleManager.Instance.UpdateConnectedBubbles();
+				GameManager.Instance.CanTouch = true;
+			}
+		}
+
+		private void CheckIsPerfect()
+		{
+			var isAnyBubbleInGrid = false;
+			for (int y = 0; y < GridLength.y; y++)
+			{
+				for (int x = 0; x < GridLength.x; x++)
+				{
+					var cellController = GetCell(x, y);
+					if (ReferenceEquals(cellController.bubbleController, null))
+						continue;
+
+					isAnyBubbleInGrid = true;
+					break;
+				}
+
+				if (isAnyBubbleInGrid)
+					break;
+
+				PopupTextManager.Instance.ShowPerfectText();
+			}
 		}
 
 		[Button]
 		public void MoveGridDown()
 		{
+			_gridMoving	= true;
 			for (int y = GridLength.y - 1; y >= 0; y--)
 			{
 				for (int x = 0; x < GridLength.x; x++)
@@ -113,8 +149,12 @@ namespace GridSystem
 						? cellController.transform.localPosition.y - distance.y
 						: GetCell(x, y - 1).transform.localPosition.y;
 
+					cellController.DOComplete();
 					cellController.transform.DOLocalMove(cellController.transform.localPosition.With(y: targetCellYPos),
-						0.5f);
+						0.5f).OnComplete((() =>
+					{
+						DOVirtual.DelayedCall(0.1f, () => _gridMoving = false);
+					}));
 				}
 			}
 		}

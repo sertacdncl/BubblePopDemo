@@ -12,6 +12,8 @@ namespace PopupTextSystem
 		[BoxGroup("References"), SerializeField]
 		private Camera mainCam;
 		
+		private PopupTextController _activeComboCounterPopup;
+		
 		#endregion
 		#region Variables
 
@@ -31,6 +33,7 @@ namespace PopupTextSystem
 		
 		public void ShowPerfectText()
 		{
+			return;
 			var popupText = PoolingManager.Instance.GetObjectFromPool("PerfectText");
 			var position = mainCam.ViewportToWorldPoint(Vector3.one * .5f);
 			popupText.transform.position = position;
@@ -41,11 +44,20 @@ namespace PopupTextSystem
 		
 		public void ShowComboCounterText(int comboCount)
 		{
-			var popupText = PoolingManager.Instance.GetObjectFromPool("ComboCounterText");
+			if(!ReferenceEquals(_activeComboCounterPopup, null))
+			{
+				PoolingManager.Instance.ReturnObjectToPool(_activeComboCounterPopup.gameObject, "PopupText");
+				_activeComboCounterPopup = null;
+			}
+			var popupText = PoolingManager.Instance.GetObjectFromPool("PopupText");
+			var popupTextController = popupText.GetComponent<PopupTextController>();
 			var position = mainCam.ViewportToWorldPoint(Vector3.one * .5f);
 			popupText.transform.position = position;
-			var popupTextController = popupText.GetComponent<PopupTextController>();
-			popupTextController.textMesh.text = "x" + comboCount;
+			popupTextController.textMesh.fontSize = comboCounterTextSize;
+			popupTextController.textMesh.text = $"{comboCount}X";
+			_activeComboCounterPopup = popupTextController;
+			popupTextController.Show();
+			
 		}
 	}
 }

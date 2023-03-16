@@ -2,6 +2,7 @@
 using Pooling;
 using Sirenix.OdinInspector;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -33,6 +34,10 @@ public class PopupTextController : MonoBehaviour
 				.SetEase(Ease.OutQuart)
 				.SetRelative(true))
 			.Append(DOTween.ToAlpha(() => textMesh.color, x => textMesh.color = x, 0, fadeDuration))
-			.OnComplete(() => PoolingManager.Instance.ReturnObjectToPool(gameObject,"PopupText"));
+			.OnComplete(() =>
+			{
+				PoolingManager.Instance.ReturnObjectToPool(gameObject, "PopupText");
+				textMesh.color = textMesh.color.WithAlpha(1f);
+			});
 	}
 }

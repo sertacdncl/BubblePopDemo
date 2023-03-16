@@ -18,13 +18,20 @@ namespace BubbleSystem
 
 		[BoxGroup("References")] public BubbleDataPoolHandler bubbleDataPoolHandler;
 		[BoxGroup("References")] public ParticleSystem destroyParticle;
+		[BoxGroup("References")] public SpriteRenderer explodeEffectSRenderer;
 
 		[BoxGroup("References"), ReadOnly] public BubbleController lastShotBubble;
 		[BoxGroup("References"), ReadOnly] public List<BubbleController> needExplodeList;
 
+		private List<BubbleController> _possibleFallBubbleList = new();
+
 		#endregion
 
 		#region Variables
+
+		private bool _explodeRunning;
+		private bool _mergeRunning;
+		private int _nonStopMergeCount = 0;
 
 		#endregion
 
@@ -68,34 +75,39 @@ namespace BubbleSystem
 		{
 			foreach (var cellController in GridManager.Instance.cellControllerList)
 			{
-				if(ReferenceEquals(cellController.bubbleController, null))
+				if (ReferenceEquals(cellController.bubbleController, null))
 					continue;
 				cellController.bubbleController.connectedBubbles.Clear();
 			}
+
 			for (int x = 0; x < GridManager.Instance.GridLength.x; x++)
 			{
-				if(ReferenceEquals(GridManager.Instance.CellController[x, GridManager.Instance.GridLength.y - 1], null))
+				if (ReferenceEquals(GridManager.Instance.CellController[x, GridManager.Instance.GridLength.y - 1], null))
 					continue;
-				if(ReferenceEquals(GridManager.Instance.CellController[x, GridManager.Instance.GridLength.y - 1].bubbleController, null))
+				if (ReferenceEquals(
+						GridManager.Instance.CellController[x, GridManager.Instance.GridLength.y - 1].bubbleController,
+						null))
 					continue;
-				ConnectBubbles(GridManager.Instance.CellController[x, GridManager.Instance.GridLength.y - 1].bubbleController);
+				ConnectBubbles(
+					GridManager.Instance.CellController[x, GridManager.Instance.GridLength.y - 1].bubbleController);
 			}
 		}
 
 		private void ConnectBubbles(BubbleController startingBubble, List<BubbleController> connectedBubbles = null)
 		{
 			var cellController = startingBubble.cellController;
-			var directions = new List<Direction> {Direction.Right, Direction.Left, Direction.DownRight, Direction.DownLeft};
-				
+			var directions = new List<Direction>
+				{ Direction.Right, Direction.Left, Direction.DownRight, Direction.DownLeft };
+
 			foreach (var direction in directions)
 			{
 				var neighbourCell = cellController.Neighbours.GetNeighbour(direction);
 				if (ReferenceEquals(neighbourCell, null))
 					continue;
 
-				if(neighbourCell.coordinate.y >= GridManager.Instance.GridLength.y-1)
+				if (neighbourCell.coordinate.y >= GridManager.Instance.GridLength.y - 1)
 					continue;
-					
+
 				if (ReferenceEquals(neighbourCell.bubbleController, null))
 					continue;
 
@@ -119,15 +131,14 @@ namespace BubbleSystem
 			}
 		}
 
-		private void CreateBubbleToCell(CellController cellController)
+		private void CreateBubbleToCell(CellController cellController, bool animated = false)
 		{
 			//Getting bubble object from pool
 			GameObject bubble = PoolingManager.Instance.GetObjectFromPool("Bubble");
 			var bubbleController = bubble.GetComponent<BubbleController>();
 
-			//Setting bubble position and rotation
-			bubble.transform.localPosition = Vector3.zero;
-			bubble.transform.rotation = Quaternion.identity;
+			//Setting bubble defaults
+			bubbleController.ResetBubble(true);
 
 			//Setting bubble parent, reference and name
 			cellController.bubbleController = bubbleController;
@@ -138,16 +149,21 @@ namespace BubbleSystem
 			//Setting bubble data
 			var bubbleData = bubbleDataPoolHandler.GetBubbleDataFromPool();
 			bubbleController.SetData(bubbleData);
+			if (animated)
+			{
+				bubbleController.transform.localScale = Vector3.zero;
+				bubbleController.transform.DOScale(Vector3.one, 0.5f);
+			}
 		}
 
 		[Button]
-		public void CreateBubbleRow(int rowCoord)
+		public void CreateBubblesToRow(int rowCoord, bool animated = false)
 		{
 			for (int x = 0; x < GridManager.Instance.GridLength.x; x++)
 			{
 				var cellController = GridManager.Instance.CellController[x, rowCoord];
 
-				CreateBubbleToCell(cellController);
+				CreateBubbleToCell(cellController, animated);
 			}
 		}
 
@@ -160,54 +176,33 @@ namespace BubbleSystem
 		private void OnMergeComplete()
 		{
 			GridManager.Instance.CheckGridAndProcess();
-			GameManager.Instance.CanTouch = true;
+
+			if (_nonStopMergeCount > 1)
+				PopupTextManager.Instance.ShowComboCounterText(_nonStopMergeCount);
+			_nonStopMergeCount = 0;
 		}
 
-		private void Explode(BubbleController bubble)
-		{
-			foreach (var neighbourCell in bubble.cellController.Neighbours.GetAllNeighbour())
-			{
-				if (ReferenceEquals(neighbourCell.bubbleController, null))
-					continue;
 
-				var neighbourBubble = neighbourCell.bubbleController;
-				neighbourBubble.cellController.bubbleController = null;
-				neighbourBubble.cellController = null;
-				neighbourBubble.bubbleRigidbody.bodyType = RigidbodyType2D.Dynamic;
-				neighbourBubble.bubbleRigidbody.AddForce(Vector2.right * Random.Range(-2f, 2f), ForceMode2D.Impulse);
-				neighbourBubble.transform.DOScale(Vector3.zero, .5f).OnComplete((() =>
-				{
-					PoolingManager.Instance.ReturnObjectToPool(neighbourBubble.gameObject, "Bubble");
-				}));
-			}
+		#region Merge Methods
 
-			var particleParams = new ParticleSystem.EmitParams
-			{
-				position = bubble.transform.position,
-				startColor = bubble.data.color,
-				applyShapeToPosition = true
-			};
-			destroyParticle.Emit(particleParams, 30);
-			bubble.cellController.bubbleController = null;
-			bubble.cellController = null;
-			Sequence sequence = DOTween.Sequence();
-			sequence.Append(bubble.transform.DOScale(Vector3.one * 1.5f, 0.5f));
-			sequence.Join(bubble.bubbleSprite.DOFade(0, 0.5f));
-			sequence.OnComplete(() => { PoolingManager.Instance.ReturnObjectToPool(bubble.gameObject, "Bubble"); });
-		}
-
-		
-		List<BubbleController> possibleFallBubbleList = new();
-		private bool DoMergeIfAvailable(BubbleController bubble)
+		private void DoMergeIfAvailable(BubbleController bubble)
 		{
 			var matchedBubbleList = new List<BubbleController>();
+			if (ReferenceEquals(bubble?.cellController, null))
+			{
+				onMergeComplete.Invoke();
+				return;
+			}
+
 			GetMatchedBubbles(bubble, matchedBubbleList);
 
 			if (matchedBubbleList.Count < 2)
 			{
 				onMergeComplete.Invoke();
-				return false;
+				return;
 			}
+
+			_mergeRunning = true;
 
 			var afterMergeValue = bubble.data.value * (1 << (matchedBubbleList.Count - 1));
 			if (afterMergeValue > 2048)
@@ -218,86 +213,109 @@ namespace BubbleSystem
 			if (afterMergeValue == 2048)
 				needExplodeList.Add(mergeBubble);
 			matchedBubbleList.Remove(mergeBubble);
-			
+
+
 			var finishedTweenCount = 0;
 			for (var index = 0; index < matchedBubbleList.Count; index++)
 			{
 				var bubbleController = matchedBubbleList[index];
 
-				foreach (var neighbourCell in bubbleController.cellController.Neighbours.GetAllNeighbour())
-				{
-					//Checking fall neededs
-					if (ReferenceEquals(neighbourCell, null))
-						continue;
+				CheckPossibleFallBubbleList(bubbleController);
 
-					if (neighbourCell.coordinate.y == GridManager.Instance.GridLength.y - 1)
-						continue;
-					
-					if (ReferenceEquals(neighbourCell.bubbleController, null))
-						continue;
-					
-					if (neighbourCell.bubbleController.data.value == 2048)
-						continue;
-					
-					if(!possibleFallBubbleList.Contains(neighbourCell.bubbleController))
-						possibleFallBubbleList.Add(neighbourCell.bubbleController);
-
-				}
-				
 				bubbleController.cellController.bubbleController = null;
 				bubbleController.cellController = null;
 				bubbleController.transform.DOMove(mergeBubblePos, 10f).SetEase(Ease.Linear).SetSpeedBased(true).OnComplete(
 					() =>
 					{
-						var particleParams = new ParticleSystem.EmitParams
-						{
-							position = mergeBubble.transform.position,
-							startColor = mergeBubble.data.color,
-							applyShapeToPosition = true
-						};
-						destroyParticle.Emit(particleParams, 10);
+						EmitDestroyParticle(mergeBubble);
 						PoolingManager.Instance.ReturnObjectToPool(bubbleController.gameObject, "Bubble");
-
+						bubbleController.ResetBubble();
 						finishedTweenCount++;
+						if (finishedTweenCount == matchedBubbleList.Count)
+							_mergeRunning = false;
 					});
 			}
 
-			StartCoroutine(WaitingForFinish());
+			StartCoroutine(WaitForMergeComplete(mergeBubble, matchedBubbleList, afterMergeValue, finishedTweenCount));
+		}
 
-			IEnumerator WaitingForFinish()
+		private IEnumerator WaitForMergeComplete(BubbleController mergeBubble, List<BubbleController> matchedBubbleList,
+			int afterMergeValue, int finishedTweenCount)
+		{
+			yield return new WaitUntil(() => _mergeRunning == false);
+
+			//Update bubble data and animate
+			var bubbleDataFromValue = bubbleDataPoolHandler.GetBubbleDataFromValue(afterMergeValue);
+			mergeBubble.SetDataScaleAnimated(bubbleDataFromValue);
+
+			//Combo counter
+			_nonStopMergeCount++;
+			//Showing popup texts
+			if (_nonStopMergeCount > 1)
+				PopupTextManager.Instance.ShowComboCounterText(_nonStopMergeCount);
+			PopupTextManager.Instance.ShowPopupText(afterMergeValue, mergeBubble.transform.position);
+
+
+			//Check falling bubbles
+			DoFallIfNeeded();
+
+			//Waiting for after merge scale animation
+			yield return new WaitForSeconds(0.3f);
+
+			if (needExplodeList.Count > 0)
 			{
-				yield return new WaitUntil((() => finishedTweenCount == matchedBubbleList.Count));
-				var bubbleDataFromValue = bubbleDataPoolHandler.GetBubbleDataFromValue(afterMergeValue);
-				mergeBubble.SetDataScaleAnimated(bubbleDataFromValue);
-				PopupTextManager.Instance.ShowPopupText(afterMergeValue, mergeBubble.transform.position);
-				UpdateConnectedBubbles();
-				if (possibleFallBubbleList.Count > 0)
+				foreach (var bubbleController in needExplodeList)
 				{
-					foreach (var bubbleController in possibleFallBubbleList)
-					{
-						CheckBubbleDisconnected(bubbleController);
-					}
+					Explode(bubbleController);
 				}
 
-				if (needExplodeList.Count > 0)
-				{
-					DOVirtual.DelayedCall(0.3f, () =>
-					{
-						foreach (var bubbleController in needExplodeList)
-						{
-							Explode(bubbleController);
-						}
+				needExplodeList.Clear();
 
-						needExplodeList.Clear();
-						DOVirtual.DelayedCall(0.7f, () => DoMergeIfAvailable(mergeBubble));
-					});
+				yield return new WaitUntil(() => _explodeRunning == false);
+
+				//Check falling bubbles
+				DoFallIfNeeded();
+				onMergeComplete.Invoke();
+			}
+			else
+			{
+				if (!ReferenceEquals(mergeBubble, null))
+				{
+					if (mergeBubble.bubbleRigidbody.bodyType == RigidbodyType2D.Static)
+						DoMergeIfAvailable(mergeBubble);
+					else
+						onMergeComplete.Invoke();
 				}
 				else
-					DOVirtual.DelayedCall(0.3f, () => DoMergeIfAvailable(mergeBubble));
+					onMergeComplete.Invoke();
+			}
+		}
+
+		private void DoFallIfNeeded()
+		{
+			UpdateConnectedBubbles();
+			if (_possibleFallBubbleList.Count > 0)
+			{
+				foreach (var bubbleController in _possibleFallBubbleList)
+				{
+					FallBubbleIfDisconnected(bubbleController);
+				}
+
+				_possibleFallBubbleList.Clear();
 			}
 
+			UpdateConnectedBubbles();
+		}
 
-			return true;
+		private void EmitDestroyParticle(BubbleController mergeBubble, int emitCount = 10)
+		{
+			var particleParams = new ParticleSystem.EmitParams
+			{
+				position = mergeBubble.transform.position,
+				startColor = mergeBubble.data.color,
+				applyShapeToPosition = true
+			};
+			destroyParticle.Emit(particleParams, emitCount);
 		}
 
 		private void GetMatchedBubbles(BubbleController bubbleController, List<BubbleController> matchedList)
@@ -325,16 +343,18 @@ namespace BubbleSystem
 
 			foreach (var bubble in mergeList)
 			{
-				var bubblePos = bubble.cellController.coordinate;
+				var bubbleCoord = bubble.cellController.coordinate;
 				hightestBubble = hightestBubble ?? bubble;
-				var highestBubblePos = hightestBubble.cellController.coordinate;
+				var highestBubbleCoord = hightestBubble.cellController.coordinate;
 
-				if (bubblePos.y >= highestBubblePos.y &&
-					(bubblePos.y != highestBubblePos.y || bubblePos.x >= highestBubblePos.x))
+				//If bubble is higher than highest bubble, set it as highest bubble
+				if (bubbleCoord.y >= highestBubbleCoord.y &&
+					(bubbleCoord.y != highestBubbleCoord.y || bubbleCoord.x >= highestBubbleCoord.x) && bubble.IsConnected)
 				{
 					hightestBubble = bubble;
 				}
 
+				//If neighbours of bubble has mergeable value after merge increase mergeable neighbour variable
 				var mergeableNeighbours = 0;
 				foreach (var neighbourCell in bubble.cellController.Neighbours.GetAllNeighbour())
 				{
@@ -355,39 +375,132 @@ namespace BubbleSystem
 			return bestBubble ?? hightestBubble;
 		}
 
-		public void CheckBubbleDisconnected(BubbleController bubbleController)
+		#endregion
+
+		private void CheckPossibleFallBubbleList(BubbleController bubbleController)
 		{
-			if(ReferenceEquals(bubbleController,null))
+			foreach (var neighbourCell in bubbleController.cellController.Neighbours.GetAllNeighbour())
+			{
+				//Checking fall neededs
+				if (ReferenceEquals(neighbourCell, null))
+					continue;
+
+				if (neighbourCell.coordinate.y == GridManager.Instance.GridLength.y - 1)
+					continue;
+
+				if (ReferenceEquals(neighbourCell.bubbleController, null))
+					continue;
+
+				if (neighbourCell.bubbleController.data.value == 2048)
+					continue;
+
+				if (!_possibleFallBubbleList.Contains(neighbourCell.bubbleController))
+				{
+					_possibleFallBubbleList.Add(neighbourCell.bubbleController);
+					CheckPossibleFallBubbleList(neighbourCell.bubbleController);
+				}
+			}
+		}
+
+		private void Explode(BubbleController bubble)
+		{
+			//This is for prevent bug
+			if(ReferenceEquals(bubble, null) || bubble.IsFalling)
 				return;
-			if(ReferenceEquals(bubbleController.cellController,null))
+			_explodeRunning = true;
+			foreach (var neighbourCell in bubble.cellController.Neighbours.GetAllNeighbour())
+			{
+				if (ReferenceEquals(neighbourCell?.bubbleController, null))
+					continue;
+
+				CheckPossibleFallBubbleList(neighbourCell.bubbleController);
+				var neighbourBubble = neighbourCell.bubbleController;
+				neighbourBubble.cellController.bubbleController = null;
+				neighbourBubble.cellController = null;
+				neighbourBubble.bubbleRigidbody.bodyType = RigidbodyType2D.Dynamic;
+				neighbourBubble.bubbleRigidbody.AddForce(Vector2.right * Random.Range(-2f, 2f), ForceMode2D.Impulse);
+				neighbourBubble.transform.DOScale(Vector3.zero, .5f).OnComplete((() =>
+				{
+					PoolingManager.Instance.ReturnObjectToPool(neighbourBubble.gameObject, "Bubble");
+					neighbourBubble.ResetBubble();
+				}));
+			}
+
+			EmitDestroyParticle(bubble, 30);
+			CameraShaker.Instance.ShakeCameraOnExplode();
+			bubble.cellController.bubbleController = null;
+			bubble.cellController = null;
+			bubble.bubbleShadowSprite.enabled = false;
+			explodeEffectSRenderer.transform.position = bubble.transform.position;
+			explodeEffectSRenderer.enabled = true;
+			explodeEffectSRenderer.transform.DOScale(Vector3.one * 2f, 0.5f).OnComplete(() =>
+			{
+				explodeEffectSRenderer.enabled = false;
+				explodeEffectSRenderer.transform.localScale = Vector3.one * 0.75f;
+			});
+			Sequence sequence = DOTween.Sequence();
+			sequence.Append(bubble.transform.DOScale(Vector3.one * 1.5f, 0.5f));
+			sequence.Join(bubble.bubbleSprite.DOFade(0, 0.5f));
+			sequence.OnComplete(() =>
+			{
+				PoolingManager.Instance.ReturnObjectToPool(bubble.gameObject, "Bubble");
+				bubble.ResetBubble();
+				_explodeRunning = false;
+			});
+		}
+
+		private void FallBubbleIfDisconnected(BubbleController bubbleController)
+		{
+			if (ReferenceEquals(bubbleController, null))
 				return;
-			if(bubbleController.cellController.coordinate.y >= GridManager.Instance.GridLength.y-1)
+			if (ReferenceEquals(bubbleController.cellController, null))
+				return;
+			if (bubbleController.cellController.coordinate.y >= GridManager.Instance.GridLength.y - 1)
 				return;
 
 			var needToFall = true;
 			for (int x = 0; x < GridManager.Instance.GridLength.x; x++)
 			{
-				var topCell = GridManager.Instance.GetCell(x, GridManager.Instance.GridLength.y-1);
-				
-				if(ReferenceEquals(topCell,null))
-					continue;
-				
-				if(ReferenceEquals(topCell.bubbleController,null))
+				var topCell = GridManager.Instance.GetCell(x, GridManager.Instance.GridLength.y - 1);
+
+				if (ReferenceEquals(topCell, null))
 					continue;
 
-				if (topCell.bubbleController.connectedBubbles.Contains(bubbleController))
+				if (ReferenceEquals(topCell.bubbleController, null))
+					continue;
+				
+				var isMyNeighbourConnected = false;
+				foreach (var neighbour in bubbleController.cellController.Neighbours.GetAllNeighbour())
 				{
-					needToFall = false;
-					return;
+					//Checking fall neededs
+					if (ReferenceEquals(neighbour, null))
+						continue;
+					
+					if (neighbour.coordinate.y == GridManager.Instance.GridLength.y - 1)
+						continue;
+
+					if (ReferenceEquals(neighbour.bubbleController, null))
+						continue;
+
+					if (topCell.bubbleController.connectedBubbles.Contains(neighbour.bubbleController))
+					{
+						isMyNeighbourConnected = true;
+						break;
+					}
 				}
+
+				if (topCell.bubbleController.connectedBubbles.Contains(bubbleController) || isMyNeighbourConnected)
+					return;
+				
 			}
 
 			if (needToFall)
 			{
 				bubbleController.cellController.bubbleController = null;
 				bubbleController.cellController = null;
+				bubbleController.transform.SetParent(PoolingManager.Instance.GetPoolHolder("Bubble"));
 				bubbleController.bubbleRigidbody.bodyType = RigidbodyType2D.Dynamic;
-				bubbleController.bubbleRigidbody.AddForce(Vector2.right * Random.Range(-2f, 2f), ForceMode2D.Impulse);		
+				bubbleController.bubbleRigidbody.AddForce(Vector2.right * Random.Range(-2f, 2f), ForceMode2D.Impulse);
 			}
 		}
 
@@ -402,6 +515,7 @@ namespace BubbleSystem
 			};
 			destroyParticle.Emit(particleParams, 10);
 			PoolingManager.Instance.ReturnObjectToPool(bubbleController.gameObject, "Bubble");
+			bubbleController.ResetBubble();
 		}
 	}
 }

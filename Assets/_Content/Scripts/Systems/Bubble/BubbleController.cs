@@ -21,8 +21,11 @@ namespace BubbleSystem
 		[TabGroup("References")] [SerializeField]
 		private TextMeshPro valueText;
 
-		[TabGroup("References")] [SerializeField]
+		[TabGroup("References")]
 		public SpriteRenderer bubbleSprite;
+		
+		[TabGroup("References")]
+		public SpriteRenderer bubbleShadowSprite;
 
 		[TabGroup("References")] public CircleCollider2D bubbleCollider;
 
@@ -33,6 +36,30 @@ namespace BubbleSystem
 		#endregion
 
 		#region Variables
+
+		public bool IsFalling => bubbleRigidbody.bodyType == RigidbodyType2D.Dynamic;
+		public bool IsConnected
+		{
+			get
+			{
+				var topRow = GridManager.Instance.GridLength.y - 1;
+				var columnCount = GridManager.Instance.GridLength.x;
+				var isConnected = false;
+				for (int x = 0; x < columnCount; x++)
+				{
+					var cell = GridManager.Instance.GetCell(x, topRow);
+					if(ReferenceEquals(cell?.bubbleController, null))
+						continue;
+					if (cell.bubbleController.connectedBubbles.Contains(this))
+					{
+						isConnected = true;
+						break;
+					}
+				}
+
+				return isConnected;
+			}
+		}
 
 		#endregion
 
@@ -49,6 +76,20 @@ namespace BubbleSystem
 			}
 		}
 
+		public void ResetBubble(bool overrideScale = false)
+		{
+			//Setting bubble defaults
+			bubbleRigidbody.bodyType = RigidbodyType2D.Static;
+			bubbleRigidbody.velocity = Vector2.zero;
+			bubbleShadowSprite.enabled = true;
+
+			//Setting bubble position and rotation
+			transform.localPosition = Vector3.zero;
+			if(!overrideScale)
+				transform.localScale = Vector3.one;
+			transform.rotation = Quaternion.identity;
+		}
+		
 		public void SetData(BubbleData bubbleData)
 		{
 			data = bubbleData;

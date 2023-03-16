@@ -36,6 +36,8 @@ namespace BubbleSystem
 		[BoxGroup("Variables"), SerializeField]
 		private float moveSpeed = 1f;
 
+		private bool _isBubbleReady = true;
+
 		#endregion
 
 		public void PrepareShooter()
@@ -57,6 +59,8 @@ namespace BubbleSystem
 			if(!GameManager.Instance.CanTouch)
 				return;
 			
+			if(!_isBubbleReady)
+				return;
 			predictionHandler.OnMouseButton();
 		}
 
@@ -64,7 +68,7 @@ namespace BubbleSystem
 		{
 			if(!GameManager.Instance.CanTouch)
 				return;
-			if(TouchManager.TouchCount==1)
+			if(TouchManager.TouchCount==1 && _isBubbleReady)
 				predictionHandler.OnMouseButton();
 		}
 		
@@ -73,7 +77,10 @@ namespace BubbleSystem
 			TouchManager.TouchCount--;
 			if(!GameManager.Instance.CanTouch)
 				return;
-			
+			if(!_isBubbleReady)
+				return;
+			_isBubbleReady = false;
+			GameManager.Instance.CanTouch = false;
 			predictionHandler.OnMouseButtonUp();
 			ShootBubble();
 		}
@@ -81,8 +88,13 @@ namespace BubbleSystem
 		public void ShootBubble()
 		{
 			var targetCell = predictionHandler.lastTargetCell;
-			if (ReferenceEquals(targetCell, null)) return;
-			GameManager.Instance.CanTouch = false;
+			if (ReferenceEquals(targetCell, null))
+			{
+				GameManager.Instance.CanTouch = true;
+				_isBubbleReady = true;
+				return;
+			}
+
 			
 			var bubbleController = CurrentBubble;
 			targetCell.bubbleController = bubbleController;
@@ -124,7 +136,7 @@ namespace BubbleSystem
 		{
 			var bubbleController = CurrentBubble;
 			bubbleController.transform.DOScale(Vector3.one, 0.5f);
-			bubbleController.transform.DOLocalMove(Vector3.zero, 0.5f);
+			bubbleController.transform.DOLocalMove(Vector3.zero, 0.5f).OnComplete((() => _isBubbleReady = true));
 			UpdatePredictionColor();
 		}
 
@@ -133,6 +145,9 @@ namespace BubbleSystem
 			var data = BubbleManager.Instance.bubbleDataPoolHandler.GetBubbleDataFromPool();
 			var bubble = PoolingManager.Instance.GetObjectFromPool("Bubble");
 			var bubbleController = bubble.GetComponent<BubbleController>();
+			
+			bubbleController.ResetBubble();
+			
 			bubbleList.Add(bubbleController);
 			bubbleController.bubbleCollider.enabled = false;
 			bubbleController.SetData(data);

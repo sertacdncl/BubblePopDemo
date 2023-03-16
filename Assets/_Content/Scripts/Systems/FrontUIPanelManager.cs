@@ -30,7 +30,7 @@ public class FrontUIPanelManager : Singleton<FrontUIPanelManager>
 
 	public void OnClick_TryAgain()
 	{
-		SceneManager.LoadScene(0);
+		SceneManager.LoadScene("Game");
 	}
 
 	public void UpdateInGameScore(string score)

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Extensions.Vectors;
 using GridSystem;
+using MoreMountains.NiceVibrations;
 using Pooling;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -95,6 +96,7 @@ namespace BubbleSystem
 				return;
 			}
 
+			MMVibrationManager.Haptic(HapticTypes.LightImpact);
 			AudioManager.Instance.PlaySoundOnce("BubbleShoot");
 			var bubbleController = CurrentBubble;
 			targetCell.bubbleController = bubbleController;

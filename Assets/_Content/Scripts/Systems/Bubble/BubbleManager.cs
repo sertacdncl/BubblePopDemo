@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using GridSystem;
+using MoreMountains.NiceVibrations;
 using Pooling;
 using PopupTextSystem;
 using Sirenix.OdinInspector;
@@ -237,6 +238,7 @@ namespace BubbleSystem
 			}
 
 			AudioManager.Instance.PlaySoundOnce("BubbleMerge",true);
+			MMVibrationManager.Haptic(HapticTypes.LightImpact);
 			StartCoroutine(WaitForMergeComplete(mergeBubble, matchedBubbleList, afterMergeValue, finishedTweenCount));
 		}
 
@@ -427,6 +429,7 @@ namespace BubbleSystem
 			}
 
 			EmitDestroyParticle(bubble, 30);
+			MMVibrationManager.Haptic(HapticTypes.HeavyImpact);
 			CameraShaker.Instance.ShakeCameraOnExplode();
 			AudioManager.Instance.PlaySoundOnce("BubbleExplode");
 			bubble.cellController.bubbleController = null;

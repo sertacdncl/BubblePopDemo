@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BubbleSystem;
 using DG.Tweening;
 using Extensions.Vectors;
+using MoreMountains.NiceVibrations;
 using PopupTextSystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -51,6 +52,7 @@ namespace GridSystem
 				//Game Over
 				GameManager.Instance.CanTouch = false;
 				AudioManager.Instance.PlaySoundOnce("GameOver");
+				MMVibrationManager.Haptic(HapticTypes.Failure);
 				BubbleShooterManager.Instance.GameOver();
 				foreach (var cellController in cellControllerList)
 				{
@@ -150,6 +152,7 @@ namespace GridSystem
 			{
 				PopupTextManager.Instance.ShowPerfectText();
 				AudioManager.Instance.PlaySoundOnce("Perfect");
+				MMVibrationManager.Haptic(HapticTypes.MediumImpact);
 			}
 			
 			

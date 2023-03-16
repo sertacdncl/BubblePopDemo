@@ -51,6 +51,11 @@ public class BubbleDataPoolHandler : MonoBehaviour
 		}
 	}
 
+	public BubbleData GetBubbleDataFromValue(int value)
+	{
+		return bubbleDataList.Find(x => x.value == value);
+	}
+
 	private BubbleData GetBubbleDataFromOption(Helpers.Option option)
 	{
 		var bubbleData = option switch

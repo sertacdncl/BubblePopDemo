@@ -40,7 +40,10 @@ namespace Pooling
 		{
 			if (pool.Count == 0)
 			{
+#if UNITY_EDITOR
 				Debug.LogWarning($"{poolName} pool empty. Adding a new object to the pool.");
+#endif
+
 				GameObject poolObject = Instantiate(poolObjectPrefab);
 				poolObject.SetActive(false);
 				pool.Enqueue(poolObject);
@@ -54,6 +57,7 @@ namespace Pooling
 		public void ReturnObjectToPool(GameObject poolObject)
 		{
 			poolObject.SetActive(false);
+			poolObject.transform.SetParent(transform);
 			pool.Enqueue(poolObject);
 		}
 	}

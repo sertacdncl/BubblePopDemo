@@ -94,6 +94,8 @@ namespace GridSystem
 					BubbleManager.Instance.CreateBubbleRow(GridLength.y - 1);
 				}
 			}
+			
+			BubbleManager.Instance.UpdateConnectedBubbles();
 		}
 
 		[Button]
@@ -116,5 +118,6 @@ namespace GridSystem
 				}
 			}
 		}
+		
 	}
 }

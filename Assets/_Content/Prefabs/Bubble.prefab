@@ -282,6 +282,7 @@ MonoBehaviour:
   data:
     value: 0
     color: {r: 0, g: 0, b: 0, a: 0}
+  matchedBubbles: []
   valueText: {fileID: 2831304269503289918}
   bubbleSprite: {fileID: 8989320197166825075}
   bubbleCollider: {fileID: 2530651853649301582}

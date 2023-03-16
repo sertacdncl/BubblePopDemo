@@ -16,10 +16,10 @@ namespace Pooling
 
 		private void Awake()
 		{
-			if(pools.Count == 0)
+			if (pools.Count == 0)
 				Debug.LogError("Pool list is empty!");
 		}
-		
+
 		public Transform GetPoolHolder(string poolName)
 		{
 			var pool = pools.Find(x => string.Equals(x.poolName, poolName, StringComparison.CurrentCultureIgnoreCase));
@@ -29,6 +29,14 @@ namespace Pooling
 		public GameObject GetObjectFromPool(string poolName)
 		{
 			var pool = pools.Find(x => string.Equals(x.poolName, poolName, StringComparison.CurrentCultureIgnoreCase));
+			if (ReferenceEquals(pool, null))
+			{
+#if UNITY_EDITOR
+				Debug.LogWarning("Can't find pool with name in list: " + poolName + "!");
+#endif
+				return null;
+			}
+
 			return pool.GetPoolObject();
 		}
 

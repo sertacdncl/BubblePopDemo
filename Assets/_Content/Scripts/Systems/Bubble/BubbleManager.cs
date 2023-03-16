@@ -236,6 +236,7 @@ namespace BubbleSystem
 					});
 			}
 
+			AudioManager.Instance.PlaySoundOnce("BubbleMerge",true);
 			StartCoroutine(WaitForMergeComplete(mergeBubble, matchedBubbleList, afterMergeValue, finishedTweenCount));
 		}
 
@@ -254,6 +255,8 @@ namespace BubbleSystem
 			if (_nonStopMergeCount > 1)
 				PopupTextManager.Instance.ShowComboCounterText(_nonStopMergeCount);
 			PopupTextManager.Instance.ShowPopupText(afterMergeValue, mergeBubble.transform.position);
+			var score = _nonStopMergeCount > 0 ? afterMergeValue * _nonStopMergeCount : afterMergeValue;
+			ScoreManager.Instance.UpdateScore(score);
 
 
 			//Check falling bubbles
@@ -415,10 +418,7 @@ namespace BubbleSystem
 
 				CheckPossibleFallBubbleList(neighbourCell.bubbleController);
 				var neighbourBubble = neighbourCell.bubbleController;
-				neighbourBubble.cellController.bubbleController = null;
-				neighbourBubble.cellController = null;
-				neighbourBubble.bubbleRigidbody.bodyType = RigidbodyType2D.Dynamic;
-				neighbourBubble.bubbleRigidbody.AddForce(Vector2.right * Random.Range(-2f, 2f), ForceMode2D.Impulse);
+				neighbourBubble.Fall();
 				neighbourBubble.transform.DOScale(Vector3.zero, .5f).OnComplete((() =>
 				{
 					PoolingManager.Instance.ReturnObjectToPool(neighbourBubble.gameObject, "Bubble");
@@ -428,6 +428,7 @@ namespace BubbleSystem
 
 			EmitDestroyParticle(bubble, 30);
 			CameraShaker.Instance.ShakeCameraOnExplode();
+			AudioManager.Instance.PlaySoundOnce("BubbleExplode");
 			bubble.cellController.bubbleController = null;
 			bubble.cellController = null;
 			bubble.bubbleShadowSprite.enabled = false;
@@ -496,11 +497,7 @@ namespace BubbleSystem
 
 			if (needToFall)
 			{
-				bubbleController.cellController.bubbleController = null;
-				bubbleController.cellController = null;
-				bubbleController.transform.SetParent(PoolingManager.Instance.GetPoolHolder("Bubble"));
-				bubbleController.bubbleRigidbody.bodyType = RigidbodyType2D.Dynamic;
-				bubbleController.bubbleRigidbody.AddForce(Vector2.right * Random.Range(-2f, 2f), ForceMode2D.Impulse);
+				bubbleController.Fall();
 			}
 		}
 

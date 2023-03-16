@@ -95,7 +95,7 @@ namespace BubbleSystem
 				return;
 			}
 
-			
+			AudioManager.Instance.PlaySoundOnce("BubbleShoot");
 			var bubbleController = CurrentBubble;
 			targetCell.bubbleController = bubbleController;
 			bubbleController.transform.SetParent(targetCell.transform, true);
@@ -163,6 +163,14 @@ namespace BubbleSystem
 		private void UpdatePredictionColor()
 		{
 			predictionHandler.SetBubblePredictionColor(CurrentBubble.data.color);
+		}
+
+		public void GameOver()
+		{
+			foreach (var bubbleController in bubbleList)
+			{
+				bubbleController.gameObject.SetActive(false);
+			}
 		}
 	}
 }

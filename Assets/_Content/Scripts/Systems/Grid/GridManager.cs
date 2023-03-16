@@ -46,6 +46,22 @@ namespace GridSystem
 		[Button]
 		public void CheckGridAndProcess()
 		{
+			if (GridLength.y >= 10)
+			{
+				//Game Over
+				GameManager.Instance.CanTouch = false;
+				AudioManager.Instance.PlaySoundOnce("GameOver");
+				BubbleShooterManager.Instance.GameOver();
+				foreach (var cellController in cellControllerList)
+				{
+					if(ReferenceEquals(cellController.bubbleController, null))
+						continue;
+					
+					cellController.bubbleController.Fall();
+				}
+				FrontUIPanelManager.Instance.GameOver();
+				return;
+			}
 			//Check is there any bubble in grid and show perfect text
 			CheckIsPerfect();
 
@@ -128,9 +144,15 @@ namespace GridSystem
 
 				if (isAnyBubbleInGrid)
 					break;
-
-				PopupTextManager.Instance.ShowPerfectText();
 			}
+
+			if (!isAnyBubbleInGrid)
+			{
+				PopupTextManager.Instance.ShowPerfectText();
+				AudioManager.Instance.PlaySoundOnce("Perfect");
+			}
+			
+			
 		}
 
 		[Button]

@@ -7,16 +7,17 @@ using UnityEngine.UI;
 
 public class DarkLightModeHandler : MonoBehaviour
 {
-    [SerializeField] private Color darkModeColor;
+	[SerializeField] private Color darkModeColor;
 	[SerializeField] private Color lightModeColor;
-	
+
 	[SerializeField] private Camera mainCamera;
 	[SerializeField] private List<SpriteRenderer> spriteRenderers;
-	
+
 	[SerializeField] private Sprite darkModeSprite;
 	[SerializeField] private Sprite lightModeSprite;
+	[SerializeField] private Image restartImage;
 	[SerializeField] private Image buttonImage;
-	
+
 	public void ToggleColorMode()
 	{
 		if (mainCamera.backgroundColor == darkModeColor)
@@ -26,11 +27,17 @@ public class DarkLightModeHandler : MonoBehaviour
 			{
 				spriteRenderer.DOColor(lightModeColor, 0.2f);
 			}
-			
+
 			buttonImage.DOFade(0, 0.1f).OnComplete(() =>
 			{
 				buttonImage.sprite = darkModeSprite;
 				buttonImage.DOFade(1, 0.1f);
+			});
+			
+			restartImage.DOFade(0, 0.1f).OnComplete(() =>
+			{
+				restartImage.color = darkModeColor;
+				restartImage.DOFade(1, 0.1f);
 			});
 		}
 		else
@@ -40,11 +47,17 @@ public class DarkLightModeHandler : MonoBehaviour
 			{
 				spriteRenderer.DOColor(darkModeColor, 0.2f);
 			}
-			
+
 			buttonImage.DOFade(0, 0.1f).OnComplete(() =>
 			{
 				buttonImage.sprite = lightModeSprite;
 				buttonImage.DOFade(1, 0.1f);
+			});
+			
+			restartImage.DOFade(0, 0.1f).OnComplete(() =>
+			{
+				restartImage.color = lightModeColor;
+				restartImage.DOFade(1, 0.1f);
 			});
 		}
 	}

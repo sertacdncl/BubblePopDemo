@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using GridSystem;
+using Pooling;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -80,7 +81,6 @@ namespace BubbleSystem
 		{
 			//Setting bubble defaults
 			bubbleRigidbody.bodyType = RigidbodyType2D.Static;
-			bubbleRigidbody.velocity = Vector2.zero;
 			bubbleShadowSprite.enabled = true;
 
 			//Setting bubble position and rotation
@@ -106,6 +106,15 @@ namespace BubbleSystem
 				bubbleSprite.color = data.color;
 				transform.DOScale(Vector3.one, 0.1f);
 			});
+		}
+		
+		public void Fall()
+		{
+			cellController.bubbleController = null;
+			cellController = null;
+			transform.SetParent(PoolingManager.Instance.GetPoolHolder("Bubble"));
+			bubbleRigidbody.bodyType = RigidbodyType2D.Dynamic;
+			bubbleRigidbody.AddForce(Vector2.right * Random.Range(-2f, 2f), ForceMode2D.Impulse);
 		}
 		
 	}

@@ -33,13 +33,13 @@ namespace PopupTextSystem
 		
 		public void ShowPerfectText()
 		{
-			return;
-			var popupText = PoolingManager.Instance.GetObjectFromPool("PerfectText");
+			var popupText = PoolingManager.Instance.GetObjectFromPool("PopupText");
 			var position = mainCam.ViewportToWorldPoint(Vector3.one * .5f);
-			popupText.transform.position = position;
 			var popupTextController = popupText.GetComponent<PopupTextController>();
+			popupText.transform.position = position;
 			popupTextController.textMesh.fontSize = perfectTextSize;
 			popupTextController.textMesh.text = "Perfect";
+			popupTextController.Show();
 		}
 		
 		public void ShowComboCounterText(int comboCount)

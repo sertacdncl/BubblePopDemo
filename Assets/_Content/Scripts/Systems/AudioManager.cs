@@ -8,7 +8,7 @@ public class AudioManager : Singleton<AudioManager>
 	[SerializeField] private AudioSource audioSource;
 	[SerializeField] private List<AudioItem> audioItems;
 	
-	public void PlaySoundOnce(string tag)
+	public void PlaySoundOnce(string tag, bool randomPitch = false)
 	{
 		var audioItem = audioItems.Find(x => x.tag == tag);
 		if (audioItem == null)
@@ -17,6 +17,10 @@ public class AudioManager : Singleton<AudioManager>
 			return;
 		}
 		
+		if(randomPitch)
+			audioSource.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+		else
+			audioSource.pitch = audioItem.pitch;
 		audioSource.PlayOneShot(audioItem.audioClip, audioItem.volume);
 	}
 }

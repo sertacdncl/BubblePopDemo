@@ -591,6 +591,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCam: {fileID: 2003724599}
+  popupTextSize: 3
   comboCounterTextSize: 10
   perfectTextSize: 15
 --- !u!1 &462707272
@@ -622,7 +623,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1113579684}
-  - {fileID: 510709201}
+  - {fileID: 1706018174}
   - {fileID: 1856424520}
   - {fileID: 1924567408}
   m_Father: {fileID: 0}
@@ -653,13 +654,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 510709200}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.73833156, y: 5.1341743, z: -0.003431945}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.0020539586, y: -0.5427975, z: 0}
+  m_LocalScale: {x: 0.05298013, y: 0.43305996, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1706018174}
-  m_Father: {fileID: 462707273}
-  m_RootOrder: 1
+  m_Children: []
+  m_Father: {fileID: 1706018174}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &510709202
 SpriteRenderer:
@@ -707,7 +707,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 10, y: 0.64349586}
+  m_Size: {x: 18.85325, y: 0.64349586}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1719,7 +1719,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolObjectPrefab: {fileID: 7011830711787308542, guid: 2c1c0d22213a97c47bcdaa7c711dcc98, type: 3}
   poolName: GridCell
-  initialPoolSize: 50
+  initialPoolSize: 80
 --- !u!4 &1100082591
 Transform:
   m_ObjectHideFlags: 0
@@ -1760,7 +1760,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1113579683}
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -0.58, y: -7.24, z: -0.003431945}
+  m_LocalPosition: {x: -0.8639, y: -7.24, z: -0.003431945}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1813,7 +1813,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 10, y: 6.505892}
+  m_Size: {x: 18.724195, y: 6.505892}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -2821,12 +2821,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1706018173}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.2534003, z: 0}
-  m_LocalScale: {x: 10, y: 2.309149, z: 1}
+  m_LocalPosition: {x: -0.73833156, y: 6.3875747, z: -0.003431945}
+  m_LocalScale: {x: 18.875, y: 2.309149, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 510709201}
-  m_RootOrder: 0
+  m_Children:
+  - {fileID: 510709201}
+  m_Father: {fileID: 462707273}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1706018175
 SpriteRenderer:
@@ -8354,7 +8355,7 @@ Camera:
   far clip plane: 100
   field of view: 60
   orthographic: 1
-  orthographic size: 7
+  orthographic size: 7.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -8436,6 +8437,7 @@ MonoBehaviour:
   spriteRenderers:
   - {fileID: 510709202}
   - {fileID: 1706018175}
+  - {fileID: 1113579685}
   darkModeSprite: {fileID: 21300000, guid: 7ddcc0c6bde42ed4c9964d94c3ee2fc6, type: 3}
   lightModeSprite: {fileID: 21300000, guid: 52f6f568d3afa0b4aa1cf985400fbb63, type: 3}
   restartImage: {fileID: 932129354}

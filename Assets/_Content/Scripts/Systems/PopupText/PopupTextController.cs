@@ -17,6 +17,8 @@ public class PopupTextController : MonoBehaviour
 
 	#region Variables
 
+	[HideInInspector] public bool isPlaying;
+
 	[BoxGroup("Variables"), SerializeField]
 	private float animDuration = 0.75f;
 
@@ -30,6 +32,7 @@ public class PopupTextController : MonoBehaviour
 
 	public void Show()
 	{
+		isPlaying = true;
 		DOTween.Sequence()
 			.Join(transform.DOMoveY(animValue, animDuration)
 				.SetEase(Ease.OutQuart)
@@ -37,6 +40,7 @@ public class PopupTextController : MonoBehaviour
 			.Append(DOTween.ToAlpha(() => textMesh.color, x => textMesh.color = x, 0, fadeDuration))
 			.OnComplete(() =>
 			{
+				isPlaying = false;
 				PoolingManager.Instance.ReturnObjectToPool(gameObject, "PopupText");
 				textMesh.color = textMesh.color.With(a:1f);
 			});

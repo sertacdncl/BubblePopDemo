@@ -47,7 +47,7 @@ namespace GridSystem
 		[Button]
 		public void CheckGridAndProcess()
 		{
-			if (GridLength.y >= 10)
+			if (GridLength.y >= 11)
 			{
 				//Game Over
 				GameManager.Instance.CanTouch = false;

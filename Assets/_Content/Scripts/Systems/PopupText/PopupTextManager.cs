@@ -6,31 +6,33 @@ namespace PopupTextSystem
 {
 	public class PopupTextManager : Singleton<PopupTextManager>
 	{
-
-		#region Refere
+		#region References
 
 		[BoxGroup("References"), SerializeField]
 		private Camera mainCam;
-		
+
 		private PopupTextController _activeComboCounterPopup;
-		
+
 		#endregion
+
 		#region Variables
 
+		[SerializeField] private float popupTextSize = 3f;
 		[SerializeField] private float comboCounterTextSize = 15f;
 		[SerializeField] private float perfectTextSize = 15f;
 
 		#endregion
 
-		public void ShowPopupText(int value, Vector3 position)
+		public void  ShowPopupText(int value, Vector3 position)
 		{
 			var popupText = PoolingManager.Instance.GetObjectFromPool("PopupText");
 			var popupTextController = popupText.GetComponent<PopupTextController>();
+			popupTextController.textMesh.fontSize = popupTextSize;
 			popupTextController.textMesh.text = value.ToString();
 			popupText.transform.position = position;
 			popupTextController.Show();
 		}
-		
+
 		public void ShowPerfectText()
 		{
 			var popupText = PoolingManager.Instance.GetObjectFromPool("PopupText");
@@ -41,14 +43,20 @@ namespace PopupTextSystem
 			popupTextController.textMesh.text = "Perfect";
 			popupTextController.Show();
 		}
-		
+
 		public void ShowComboCounterText(int comboCount)
 		{
-			if(!ReferenceEquals(_activeComboCounterPopup, null))
+			if (!ReferenceEquals(_activeComboCounterPopup, null))
 			{
+				var lastComboCount = int.Parse(_activeComboCounterPopup.textMesh.text.Replace("X", ""));
+				if (_activeComboCounterPopup.isPlaying && comboCount == lastComboCount)
+					return;
+
 				PoolingManager.Instance.ReturnObjectToPool(_activeComboCounterPopup.gameObject, "PopupText");
 				_activeComboCounterPopup = null;
 			}
+
+
 			var popupText = PoolingManager.Instance.GetObjectFromPool("PopupText");
 			var popupTextController = popupText.GetComponent<PopupTextController>();
 			var position = mainCam.ViewportToWorldPoint(Vector3.one * .5f);
@@ -57,7 +65,6 @@ namespace PopupTextSystem
 			popupTextController.textMesh.text = $"{comboCount}X";
 			_activeComboCounterPopup = popupTextController;
 			popupTextController.Show();
-			
 		}
 	}
 }

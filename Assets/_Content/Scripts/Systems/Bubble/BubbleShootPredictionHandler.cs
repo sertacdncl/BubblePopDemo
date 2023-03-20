@@ -27,14 +27,11 @@ namespace BubbleSystem
 		[BoxGroup("References"), SerializeField]
 		private LayerMask raycastLayers;
 
-		[BoxGroup("References"), ReadOnly]
-		public CellController lastTargetCell;
-		
-		[BoxGroup("References"), ReadOnly]
-		public Direction lastTargetCellDirection;
-		
-		[BoxGroup("References"), ReadOnly]
-		public List<Vector3> lastRayPath;
+		[BoxGroup("References"), ReadOnly] public CellController lastTargetCell;
+
+		[BoxGroup("References"), ReadOnly] public Direction lastTargetCellDirection;
+
+		[BoxGroup("References"), ReadOnly] public List<Vector3> lastRayPath;
 
 		#endregion
 
@@ -50,7 +47,7 @@ namespace BubbleSystem
 			var rayPath = GetTargetDestination();
 			SetVisuals(rayPath);
 		}
-		
+
 		public void OnMouseButtonUp()
 		{
 			UpdateLastRayPath();
@@ -78,7 +75,8 @@ namespace BubbleSystem
 			var ray = new Ray2D(shooterPos, mousePos);
 			var rayPath = new List<Vector3>();
 			var raycastHit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, raycastLayers);
-			lastTargetCell = null; ;
+			lastTargetCell = null;
+			;
 			lastRayPath.Clear();
 			if (raycastHit)
 			{
@@ -176,47 +174,35 @@ namespace BubbleSystem
 			// Determine the direction to move in based on the normal vector and free neighboring cells.
 			Direction? direction;
 
-			switch (normal.y)
+			//It can better
+			//Down
+			if (normal.y < 0)
 			{
-				// If the hit was from below the bubble...
-				case < 0:
-					// Try to get exact direction (right, down-right, left, or down-left)
-					direction = normal.x switch
-					{
-						> 0 =>
-							downRightCellIsFree ? Direction.DownRight :
-							rightCellIsFree ? Direction.Right :
-							downLeftCellIsFree ? Direction.DownLeft :
-							leftCellIsFree ? Direction.Left : null,
-						_ =>
-							downLeftCellIsFree ? Direction.DownLeft :
-							leftCellIsFree ? Direction.Left :
-							downRightCellIsFree ? Direction.DownRight :
-							rightCellIsFree ? Direction.Right : null
-					};
-					break;
-				// If the hit was from above the bubble...
-				case > 0:
-					// Try to get exact direction (right, up-right, left, or up-left)
-					direction = normal.x switch
-					{
-						> 0 =>
-							upperRightCellIsFree ? Direction.UpRight :
-							rightCellIsFree ? Direction.Right :
-							upperLeftCellIsFree ? Direction.UpLeft :
-							leftCellIsFree ? Direction.Left : null,
-						_ =>
-							upperLeftCellIsFree ? Direction.UpLeft :
-							leftCellIsFree ? Direction.Left :
-							upperRightCellIsFree ? Direction.UpRight :
-							rightCellIsFree ? Direction.Right : null
-					};
-					break;
-				// If the hit was from the side of the bubble...
-				default:
-					// Try to get exact direction (right or left)
-					direction = normal.x > 0 ? Direction.Right : Direction.Left;
-					break;
+				if (normal.y > 0.4f * -1f && normal.y < -0.6f * -1f) //Left or Right
+				{
+					if (normal.x > 0)
+						direction = rightCellIsFree ? Direction.Right : downRightCellIsFree ? Direction.DownRight : null;
+					else
+						direction = leftCellIsFree ? Direction.Left : downLeftCellIsFree ? Direction.DownLeft : null;
+				}
+				else if (normal.x > 0)
+					direction = downRightCellIsFree ? Direction.DownRight : rightCellIsFree ? Direction.Right : null;
+				else
+					direction = downLeftCellIsFree ? Direction.DownLeft : leftCellIsFree ? Direction.Left : null;
+			}
+			else
+			{
+				if (normal.y > 0.4f && normal.y < 0.6f)
+				{
+					if (normal.x > 0)
+						direction = rightCellIsFree ? Direction.Right : upperRightCellIsFree ? Direction.UpRight : null;
+					else
+						direction = leftCellIsFree ? Direction.Left : upperLeftCellIsFree ? Direction.UpLeft : null;
+				}
+				else if (normal.x > 0)
+					direction = upperRightCellIsFree ? Direction.UpRight : rightCellIsFree ? Direction.Right : null;
+				else
+					direction = upperLeftCellIsFree ? Direction.UpLeft : leftCellIsFree ? Direction.Left : null;
 			}
 
 			return direction;
@@ -253,8 +239,6 @@ namespace BubbleSystem
 
 				SetLine(rayPath);
 			}
-
-			
 		}
 
 		private void SetLine(List<Vector3> rayPath)
@@ -268,7 +252,7 @@ namespace BubbleSystem
 
 		public void SetBubblePredictionColor(Color color)
 		{
-			bubbleIndicator.color = color.With(a:0.5f);
+			bubbleIndicator.color = color.With(a: 0.5f);
 		}
 	}
 }

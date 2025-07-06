@@ -13,6 +13,8 @@ namespace Pooling
 		private GameObject poolObjectPrefab;
 
 		private Queue<GameObject> pool = new();
+		
+		public List<GameObject> PoolObjects => new List<GameObject>(pool);
 
 		#endregion
 
@@ -24,7 +26,7 @@ namespace Pooling
 		private int initialPoolSize = 50;
 
 		#endregion
-
+		
 
 		private void Awake()
 		{
@@ -33,6 +35,7 @@ namespace Pooling
 				GameObject poolObject = Instantiate(poolObjectPrefab, transform);
 				poolObject.SetActive(false);
 				pool.Enqueue(poolObject);
+				PoolObjects.Add(poolObject);
 			}
 		}
 

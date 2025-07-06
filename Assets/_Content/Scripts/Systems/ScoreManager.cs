@@ -4,14 +4,24 @@ public class ScoreManager : Singleton<ScoreManager>
 {
 	#region Variables
 
-	public int score;
+	private int _score;
 
 	#endregion
+	
+	public int Score
+	{
+		get => _score;
+		set
+		{
+			_score = value;
+			FrontUIPanelManager.Instance.UpdateInGameScore(ConvertScoreToSuffix(_score));
+		}
+	}
 
 	public void UpdateScore(int value)
 	{
-		score += value;
-		FrontUIPanelManager.Instance.UpdateInGameScore(ConvertScoreToSuffix(score));
+		_score += value;
+		FrontUIPanelManager.Instance.UpdateInGameScore(ConvertScoreToSuffix(_score));
 	}
 
 	private string ConvertScoreToSuffix(int value)

@@ -61,7 +61,17 @@ namespace GridSystem
 					
 					cellController.bubbleController.Fall();
 				}
-				FrontUIPanelManager.Instance.GameOver();
+				
+				//Save Max Score
+				MaxScoreSystem.SetMaxScore(ScoreManager.Instance.Score);
+				
+				//Wait for all bubbles fall
+				DOVirtual.DelayedCall(1f, () =>
+				{
+					//Show Game Over Panel
+					FrontUIPanelManager.Instance.GameOver();
+				});
+				
 				return;
 			}
 			//Check is there any bubble in grid and show perfect text
